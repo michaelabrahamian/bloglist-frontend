@@ -7,7 +7,7 @@ import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 
-const Notification = ({ message, type} ) => {
+const Notification = ({ message, type }) => {
   if (message === null) {
     return null
   }
@@ -37,13 +37,13 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+      setBlogs(blogs)
+    )
   }, [])
 
   // Check for logged in user on load
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedInBloglistUser')  
+    const loggedUserJSON = window.localStorage.getItem('loggedInBloglistUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -90,14 +90,32 @@ const App = () => {
     }, 5000)
   }
 
+  const handleAddLike = async (blogObject) => {
+    const response = await blogService.addLike(blogObject)
+    // Update the likes count of the blog item in state array
+    // Make a copy of the blogs state array
+    let blogsCopy = [...blogs]
+    // Get the index of the blog to update likes count
+    let blogIndexToUpdate = blogs.findIndex(blog => blog.id === blogObject.id)
+    // Set that item to the returned blog object
+    blogsCopy[blogIndexToUpdate] = response
+    // Set the modified copy to state
+    setBlogs(blogsCopy)
+  }
 
-
+  // Function to display the list of blogs
   const blogList = () => (
     <div>
       <h2>List of blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      {blogs
+        .sort((a, b) => { // sort by the number of likes
+          if (a.likes < b.likes) return 1
+          if (a.likes > b.likes) return -1
+          return 0
+        })
+        .map(blog =>
+          <Blog key={blog.id} blog={blog} handleAddLike={handleAddLike} handleRemove={handleRemoveBlog} />
+        )}
     </div>
   )
 
@@ -123,10 +141,20 @@ const App = () => {
 
   }
 
+  const handleRemoveBlog = async (blogId) => {
+
+    const response = await blogService.remove(blogId)
+
+    console.log('remove response', response)
+
+    // remove the blog from state blogs array too
+    setBlogs(blogs.filter(blog => blog.id !== blogId))
+  }
+
   const loginForm = () => {
     return (
       <Togglable buttonLabel="Log in">
-        <LoginForm 
+        <LoginForm
           username={username}
           password={password}
           handleUsernameChange={({ target }) => setUsername(target.value)}
@@ -139,7 +167,7 @@ const App = () => {
 
   const createBlogForm = () => (
     <Togglable buttonLabel="Create new blog listing">
-      <BlogForm createBlog={handleCreateBlog}/>
+      <BlogForm createBlog={handleCreateBlog} />
     </Togglable>
   )
 
@@ -154,7 +182,7 @@ const App = () => {
           {createBlogForm()}
           {blogList()}
         </div>
-        
+
       }
     </Container>
   )
