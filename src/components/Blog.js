@@ -14,7 +14,8 @@ const Blog = ({ blog }) => {
     padding: 5,
     border: 'solid',
     borderWidth: 1,
-    marginBottom: 5
+    marginBottom: 5,
+    borderRadius: 10
   }
 
   const toggleBtnStyle = {
@@ -29,6 +30,10 @@ const Blog = ({ blog }) => {
       {blog.url}
       <br />
       Likes: {blog.likes} <Button>like</Button>
+      <br />
+      {blog.user ? 
+        blog.user.name // Only try to output name if the blog has a user - to prevent errors
+        : ''}
     </div>
   </div>
   )

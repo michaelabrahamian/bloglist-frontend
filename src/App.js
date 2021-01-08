@@ -14,7 +14,7 @@ const Notification = ({ message, type} ) => {
 
   let notificationClass = ''
 
-  if (type == 'success') {
+  if (type === 'success') {
     notificationClass = 'success'
   } else {
     notificationClass = 'error'
@@ -34,9 +34,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationType, setNotificationType] = useState('')
-  const [blogTitle, setBlogTitle] = useState('')
-  const [blogAuthor, setBlogAuthor] = useState('')
-  const [blogUrl, setBlogUrl] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -124,12 +121,6 @@ const App = () => {
       setNotificationMessage(null)
     }, 5000)
 
-  }
-
-  const resetNewBlogForm = () => {
-    setBlogAuthor('')
-    setBlogTitle('')
-    setBlogUrl('')
   }
 
   const loginForm = () => {
