@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 
 const BlogForm = ({ createBlog }) => {
   const [blogTitle, setBlogTitle] = useState('')
@@ -58,7 +58,7 @@ const BlogForm = ({ createBlog }) => {
           />
         </Form.Group>
 
-        <button type="submit">Create</button>
+        <Button type="submit">Create</Button>
       </Form>
     </div>
   )

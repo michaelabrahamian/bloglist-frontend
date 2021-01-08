@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 
 const LoginForm = ({
   handleSubmit,
@@ -32,7 +32,7 @@ const LoginForm = ({
           />
         </Form.Group>
 
-        <button type="submit">Login</button>
+        <Button type="submit">Login</Button>
       </Form>
     </div>
   )

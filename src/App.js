@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Container } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -159,7 +159,7 @@ const App = () => {
       {user === null
         ? loginForm() :
         <div>
-          <p>{user.name} logged in. <button onClick={handleLogout}>Logout</button></p>
+          <p>{user.name} logged in. <Button onClick={handleLogout}>Logout</Button></p>
           {createBlogForm()}
           {blogList()}
         </div>
