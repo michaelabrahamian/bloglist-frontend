@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Form } from "react-bootstrap";
+import { Form, Container } from "react-bootstrap";
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Togglable from './components/Togglable'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 
 const Notification = ({ message, type} ) => {
   if (message === null) {
@@ -51,6 +54,7 @@ const App = () => {
     }
   }, [])
 
+  // TODO: Move this to LoginForm.js
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -89,34 +93,7 @@ const App = () => {
     }, 5000)
   }
 
-  const loginForm = () => (
-    <div>
-      <h2>Login to application</h2>
-      <Form onSubmit={handleLogin}>
-        <Form.Group controlId="formUsername">
-          <Form.Label>Username</Form.Label>
-          <Form.Control
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </Form.Group>
 
-        <Form.Group controlId="formPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </Form.Group>
-
-        <button type="submit">Login</button>
-      </Form>
-    </div>
-  )
 
   const blogList = () => (
     <div>
@@ -127,19 +104,11 @@ const App = () => {
     </div>
   )
 
-  const handleCreateBlog = (event) => {
-    event.preventDefault()
-
-    const blogObject = {
-      title: blogTitle,
-      author: blogAuthor,
-      url: blogUrl,
-    }
+  const handleCreateBlog = (blogObject) => {
 
     blogService.create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        resetNewBlogForm()
       })
       .catch(error => {
         setNotificationMessage(`Error when creating blog: ${error}.`)
@@ -149,7 +118,7 @@ const App = () => {
         }, 5000)
       })
 
-    setNotificationMessage(`A new blog ${blogTitle} by ${blogAuthor} has been added.`)
+    setNotificationMessage(`A new blog ${blogObject.title} by ${blogObject.author} has been added.`)
     setNotificationType('success')
     setTimeout(() => {
       setNotificationMessage(null)
@@ -163,49 +132,28 @@ const App = () => {
     setBlogUrl('')
   }
 
-
+  const loginForm = () => {
+    return (
+      <Togglable buttonLabel="Log in">
+        <LoginForm 
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin}
+        />
+      </Togglable>
+    )
+  }
 
   const createBlogForm = () => (
-    <div>
-      <h2>Create new blog</h2>
-      <Form onSubmit={handleCreateBlog}>
-        <Form.Group controlId="formBlogTitle">
-        <Form.Label>Title</Form.Label>
-        <Form.Control 
-          type="text"
-          value={blogTitle}
-          name="BlogTitle"
-          onChange={({ target }) => setBlogTitle(target.value)}
-        />
-        </Form.Group>
-
-        <Form.Group controlId="formBlogAuthor">
-        <Form.Label>Author</Form.Label>
-        <Form.Control 
-          type="text"
-          value={blogAuthor}
-          name="BlogAuthor"
-          onChange={({ target }) => setBlogAuthor(target.value)}
-        />
-        </Form.Group>
-
-        <Form.Group controlId="formBlogUrl">
-        <Form.Label>URL</Form.Label>
-        <Form.Control 
-          type="text"
-          value={blogUrl}
-          name="BlogUrl"
-          onChange={({ target }) => setBlogUrl(target.value)}
-        />
-        </Form.Group>
-
-        <button type="submit">Create</button>
-      </Form>
-    </div>
+    <Togglable buttonLabel="Create new blog listing">
+      <BlogForm createBlog={handleCreateBlog}/>
+    </Togglable>
   )
 
   return (
-    <div>
+    <Container>
       <h1>Blogs</h1>
       <Notification message={notificationMessage} type={notificationType} />
       {user === null
@@ -217,7 +165,7 @@ const App = () => {
         </div>
         
       }
-    </div>
+    </Container>
   )
 }
 
